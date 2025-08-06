@@ -13,7 +13,7 @@ const typingTexts = [
     "Futuro Desenvolvedor Full Stack",
     "Estudante de ADS na Unisenai", 
     "Apaixonado por Tecnologia",
-    "Criador de Soluções Digitais"
+    "Inovador em Soluções Web"
 ];
 
 // ===== INICIALIZAÇÃO =====
@@ -52,48 +52,9 @@ document.addEventListener('DOMContentLoaded', function() {
     initMusicToggle();
     initKeyboardShortcuts();
     initEasterEggs();
-    initVisitorCounter();
     initAchievementBadges();
     initAdvancedInteractions();
 });
-
-// ===== CONTADOR DE VISITANTES =====
-function initVisitorCounter() {
-    const counterElement = document.querySelector('.counter-number');
-    if (!counterElement) return;
-    
-    // Simular contador de visitantes (localStorage para persistência)
-    let visitors = parseInt(localStorage.getItem('portfolio-visitors') || '1247');
-    visitors += Math.floor(Math.random() * 3) + 1; // Incremento realista
-    
-    localStorage.setItem('portfolio-visitors', visitors.toString());
-    
-    // Animação de contagem
-    let current = visitors - 50;
-    const increment = () => {
-        if (current < visitors) {
-            current += Math.ceil((visitors - current) / 10);
-            counterElement.textContent = current.toLocaleString();
-            requestAnimationFrame(increment);
-        }
-    };
-    
-    // Iniciar contagem após um delay
-    setTimeout(increment, 1000);
-    
-    // Atualizar periodicamente (simular visitantes em tempo real)
-    setInterval(() => {
-        visitors += Math.floor(Math.random() * 2);
-        localStorage.setItem('portfolio-visitors', visitors.toString());
-        counterElement.textContent = visitors.toLocaleString();
-        
-        // Efeito visual na atualização
-        counterElement.style.animation = 'bounceIn 0.6s ease-out';
-        setTimeout(() => {
-            counterElement.style.animation = '';
-        }, 600);
-    }, 30000); // A cada 30 segundos
-}
 
 // ===== BADGES DE CONQUISTA =====
 function initAchievementBadges() {
@@ -626,32 +587,67 @@ function initTypingAnimation() {
     let textIndex = 0;
     let charIndex = 0;
     let isDeleting = false;
+    let isPaused = false;
+    let isThinking = false;
     
     function typeText() {
+        if (isPaused) {
+            setTimeout(typeText, 100);
+            return;
+        }
+        
+        if (isThinking) {
+            // Efeito de "pensamento" com pontos
+            const dots = '.'.repeat(Math.floor(Date.now() / 500) % 4);
+            typingElement.textContent = dots;
+            
+            setTimeout(() => {
+                isThinking = false;
+                charIndex = 0;
+                typeText();
+            }, 1000);
+            return;
+        }
+        
         const currentText = typingTexts[textIndex];
         
         if (isDeleting) {
-            typingElement.textContent = currentText.substring(0, charIndex - 1);
+            // Removendo caracteres
+            typingElement.textContent = currentText.substring(0, charIndex);
             charIndex--;
+            
+            if (charIndex < 0) {
+                isDeleting = false;
+                textIndex = (textIndex + 1) % typingTexts.length;
+                isThinking = true;
+                typeText();
+                return;
+            }
         } else {
+            // Adicionando caracteres
             typingElement.textContent = currentText.substring(0, charIndex + 1);
             charIndex++;
+            
+            if (charIndex > currentText.length) {
+                isDeleting = true;
+                isPaused = true;
+                setTimeout(() => { isPaused = false; }, 2000); // Pausa para leitura
+            }
         }
         
-        let typeSpeed = isDeleting ? config.deletingSpeed : config.typingSpeed;
-        
-        if (!isDeleting && charIndex === currentText.length) {
-            typeSpeed = config.delayBetweenTexts;
-            isDeleting = true;
-        } else if (isDeleting && charIndex === 0) {
-            isDeleting = false;
-            textIndex = (textIndex + 1) % typingTexts.length;
+        // Velocidade variável mais natural
+        let speed;
+        if (isDeleting) {
+            speed = Math.random() * 50 + 30; // Deleção mais rápida
+        } else {
+            speed = Math.random() * 150 + 80; // Digitação mais humana
         }
         
-        setTimeout(typeText, typeSpeed);
+        setTimeout(typeText, speed);
     }
     
-    typeText();
+    // Iniciar após um delay
+    setTimeout(typeText, 1500);
 }
 
 // ===== ANIMAÇÕES DE SCROLL =====

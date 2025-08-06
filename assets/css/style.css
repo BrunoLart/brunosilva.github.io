@@ -431,6 +431,15 @@ nav {
     font-weight: 600;
     color: var(--text-secondary);
     margin-bottom: 1.5rem;
+    position: relative;
+    min-height: 1.2em;
+}
+
+.typing-text::after {
+    content: '|';
+    color: var(--primary-color);
+    animation: blink 1s infinite;
+    font-weight: 100;
 }
 
 .hero p {
@@ -673,45 +682,6 @@ nav {
 .badge:hover i {
     color: white;
     animation: bounceIn 0.6s ease-out;
-}
-
-.visitor-counter {
-    position: fixed;
-    bottom: 20px;
-    left: 20px;
-    z-index: 1000;
-    background: var(--bg-card);
-    backdrop-filter: blur(20px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: var(--border-radius);
-    padding: 0.8rem 1.2rem;
-    color: var(--text-secondary);
-    font-size: 0.9rem;
-    transition: var(--transition);
-}
-
-.visitor-counter:hover {
-    background: var(--primary-color);
-    color: white;
-    transform: scale(1.05);
-    box-shadow: var(--shadow-md);
-}
-
-.counter-content {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-}
-
-.counter-number {
-    font-weight: 700;
-    color: var(--accent-color);
-    transition: var(--transition);
-}
-
-.visitor-counter:hover .counter-number {
-    color: white;
-    animation: neonGlow 1s ease-in-out;
 }
 
 /* ===== SEÇÃO QUALIFICAÇÃO ===== */
@@ -1272,14 +1242,6 @@ footer {
         justify-content: center;
     }
     
-    .visitor-counter {
-        position: relative;
-        bottom: auto;
-        left: auto;
-        margin: 2rem auto;
-        width: fit-content;
-    }
-    
     .achievement-badges {
         grid-template-columns: 1fr;
     }
@@ -1352,6 +1314,11 @@ footer {
 @keyframes loading-shimmer {
     0% { left: -100%; }
     100% { left: 100%; }
+}
+
+@keyframes blink {
+    0%, 50% { opacity: 1; }
+    51%, 100% { opacity: 0; }
 }
 
 @keyframes breathe {
